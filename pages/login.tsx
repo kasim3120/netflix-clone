@@ -60,7 +60,7 @@ function Login() {
             )}
             </label>
           </div>
-          <button className="w-full rounded bg-[#e50914] py-3 font-semibold">Sign In</button>
+          <button onClick={()=> setLogin(true)} className="w-full rounded bg-[#e50914] py-3 font-semibold">Sign In</button>
           <div className="text-[gary]">
             New to Netflix?
             <button type="submit" className="text-white hover:underline pl-2">Sign up now</button>
