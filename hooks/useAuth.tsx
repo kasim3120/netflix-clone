@@ -1,4 +1,3 @@
-import { async } from '@firebase/util'
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -62,7 +61,8 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
   const signUp = async(email: string, password: string) => {
     setLoading(true)
 
-    await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+    await createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
       setUser(userCredential.user)
       router.push('/')
       setLoading(false)
@@ -74,7 +74,8 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
   const signIn = async(email: string, password: string) => {
     setLoading(true)
 
-    await signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
+    await signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
       setUser(userCredential.user)
       router.push('/')
       setLoading(false)
@@ -86,7 +87,8 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
   const logout = async() =>{
     setLoading(true)
 
-    signOut(auth).then(() => {
+    signOut(auth)
+    .then(() => {
       setUser(null)
     })
     .catch((error) => alert(error.message))
@@ -96,11 +98,11 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 
   const memoedValue = useMemo(()=> ({
     user, signUp, signIn, loading, logout, error
-  }),[user, loading])
+  }),[user, loading, error])
 
   return (
     <AuthContext.Provider value={memoedValue}>
-      {children}
+      {!initialLoading && children}
     </AuthContext.Provider>
   )
 }

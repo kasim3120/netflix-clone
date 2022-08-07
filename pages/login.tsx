@@ -18,6 +18,7 @@ function Login() {
   const onSubmit: SubmitHandler<Inputs> = async({ email, password }) => {
     if(login) {
       await signIn(email, password)
+      setLogin(true)
     } else {
       await signUp(email, password)
     }
@@ -60,10 +61,10 @@ function Login() {
             )}
             </label>
           </div>
-          <button onClick={()=> setLogin(true)} className="w-full rounded bg-[#e50914] py-3 font-semibold">Sign In</button>
+          <button className="w-full rounded bg-[#e50914] py-3 font-semibold" onClick={() => setLogin(true)}>Sign In</button>
           <div className="text-[gary]">
             New to Netflix?
-            <button type="submit" className="text-white hover:underline pl-2">Sign up now</button>
+            <button type="submit" className="cursor-pointer text-white hover:underline pl-2" onClick={() => setLogin(false)}>Sign up now</button>
           </div>
         </form>
     </div>
