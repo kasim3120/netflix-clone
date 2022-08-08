@@ -3,20 +3,23 @@ import { GetStaticProps } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Membership from '../components/Membership'
 import useAuth from '../hooks/useAuth'
 import useSubscription from '../hooks/useSubscription'
-import payments from '../lib/stripe'
+import payments, { goToBillingPortal } from '../lib/stripe'
 
 interface Props {
   products: Product[]
 }
 
 function Account({ products }:Props) {
-  console.log(products)
-  const {user} = useAuth()
+  
+  const {user, logout, loading } = useAuth()
   const subscription = useSubscription(user)
+  const [isBillingLoading, setBillingLoading] = useState(false)
+
+  if (loading) return null
 
   return (
     <div>
@@ -62,11 +65,11 @@ function Account({ products }:Props) {
               (product) => product.id === subscription?.product)[0]?.name
               }
           </div>
-          <p className="cursor-pointer text-blue-500 hover:underline md:text-right">Change Plan</p>
+          <p className="cursor-pointer text-blue-500 hover:underline md:text-right" onClick={goToBillingPortal}>Change Plan</p>
         </div>
         <div className="mt-6 grid grid-cols-1 gap-x-4 border px-4 py-4 md:grid-cols-4 md:border-x-0 md:border-t md:border-b-0 md:px-0 md:pb-0">
           <h4 className="text-lg text-[gray]">Settings</h4>
-          <p className="cursor-pointer text-blue-500 hover:underline md:text-left">Sign out of all devices</p>
+          <p className="cursor-pointer text-blue-500 hover:underline md:text-left" onClick={logout}>Sign out of all devices</p>
         </div>
       </main>
     </div>
