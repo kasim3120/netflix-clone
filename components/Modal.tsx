@@ -4,7 +4,7 @@ import { elementAcceptingRef } from '@mui/utils'
 import { collection, deleteDoc, doc, DocumentData, onSnapshot, setDoc } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
-import { FaPlay } from 'react-icons/fa'
+import { FaPlay, FaStop } from 'react-icons/fa'
 import ReactPlayer from 'react-player/lazy'
 import { useRecoilState } from 'recoil'
 import { modalState, movieState } from '../atoms/modalAtom'
@@ -21,6 +21,7 @@ function Modal() {
   const { user } = useAuth()
   const [addedToList, setAddedToList] = useState(false)
   const [movies, setMovies] = useState<DocumentData[] | Movie[]>([])
+  const [playing, setPlaying] = useState(true)
 
   const toastStyle = {
     background: 'white',
@@ -36,19 +37,18 @@ function Modal() {
     if(!movie) return
 
     const fetchMovie = async() => {
-      const data = await fetch(`https://api.themoviedb.org/3/${movie?.media_type === 'tv' ? 'tv' : 'movie'
-      }/${movie?.id}?api_key=${
+      const data = await fetch(`https://api.themoviedb.org/3/${movie?.media_type === 'tv' ?'tv' : 'movie'}/${movie?.id}?api_key=${
         process.env.NEXT_PUBLIC_API_KEY
       }&language=en-US&append_to_response=videos`)
       .then(response => response.json())
       if(data?.videos) {
         const index = data.videos.results.findIndex((element: Element) => element.type === "Trailer")
         setTrailer(data.videos?.results[index]?.key)
+        console.log(trailer)
       }
       if(data?.genres) {
         setGenres(data.genres)
       }
-      
     }
 
     fetchMovie()
@@ -100,11 +100,20 @@ function Modal() {
   }
   console.log(trailer);
 
+  const handlePlay = () => {
+    if(playing === true ){
+      setPlaying(false)
+    }
+    else{
+      setPlaying(true)
+    }
+  }
+
   return (
     <MuiModal open={showModal} onClose={handleClose} className="fixed !top-7 left-0 right-0 z-50 mx-auto w-full max-w-5xl overflow-hidden overflow-y-scroll rounded-md scrollbar-hide">
       <>
       <Toaster position="bottom-center"/>
-        <button className='modalButton absolute right-5 top-5 !z-40 h-9 w-9 border-none bg-[#181818] hover:bg-[#ffffff]' onClick={handleClose}>
+        <button className='modalButton absolute right-12 top-20 !z-40 h-9 w-9 border-none bg-[#181818] hover:bg-[#ffffff]' onClick={handleClose}>
           <XIcon className="h-6 w-6"></XIcon>
         </button>
 
@@ -114,14 +123,18 @@ function Modal() {
             width="100%"
             height="100%"
             style={{ position: 'absolute', top: '0', left: '0' }}
-            playing
+            playing={playing}
             muted={muted}
           />
           <div className="absolute bottom-10 flex w-full items-center justify-between px-10">
             <div className="flex space-x-2">
-              <button className="flex items-center gap-x-2 rounded bg-white px-8 text-xl font-bold text-black transition hover:bg-[#e6e6e6]
-            ">
-                <FaPlay className="h-7 w-7 text-black" />Play
+              <button className="flex items-center gap-x-2 rounded bg-white px-6 text-black transition hover:bg-[#e6e6e6]
+            " onClick={handlePlay}>
+                {playing ? 
+                  <FaPlay className="h-7 w-7 text-black"/>:
+                  <FaStop className="h-7 w-7 text-black"/>
+                }
+                
               </button>
               <button className="modalButton" onClick={handleList}>
                 {
@@ -143,11 +156,11 @@ function Modal() {
             </button>
           </div>
         </div>
-        <div className="flex space-x-16 rounded-b-md bg-[#181818] px-10 py-18">
+        <div className="flex space-x-16 rounded-b-md bg-[#181818] px-10 py-10">
           <div className="space-y-6 text-lg">
             <div className="flex items-center space-x-2 text-sm">
               <p className="font-semibold text-green-400">{movie!.vote_average * 10}% Match</p>
-              <p className="font-light">{movie?.backdrop_path.release_data || movie?.first_air_date}</p>
+              <p className="font-light">{movie?.release_date || movie?.first_air_date}</p>
               <div className="flex h-4 items-center justify-center rounded border border-white/40 px-1.5 text-xs">HD
               </div>
             </div>
