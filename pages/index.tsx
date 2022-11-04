@@ -4,11 +4,16 @@ import Banner from '../components/Banner'
 import Row from '../components/Row'
 import Modal from '../components/Modal'
 import Plans from '../components/Plans'
+
+//custom hook
 import useAuth from '../hooks/useAuth'
 import useSubscription from '../hooks/useSubscription'
 import useList from '../hooks/useList'
+
+//recoil
 import { modalState, movieState } from '../atoms/modalAtom'
 import { useRecoilValue } from 'recoil'
+
 import { Movie } from '../typings'
 import requests from '../utils/requests'
 import { getProducts, Product } from '@stripe/firestore-stripe-payments'
